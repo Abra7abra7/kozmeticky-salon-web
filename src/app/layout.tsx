@@ -18,6 +18,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://kozmeticky-salon.sk'),
   title: {
     default: 'Kozmetický salón | Profesionálna starostlivosť o pleť',
     template: '%s | Kozmetický salón',
