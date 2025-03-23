@@ -14,8 +14,9 @@ type BlogPost = {
   excerpt: string;
   cover_image_url: string;
   published_at: string;
-  category: string;
+  categories: string[];
   author: {
+    id: string;
     name: string;
     image_url: string;
   };
@@ -42,32 +43,37 @@ export default function BlogPage() {
             cover_image_url, 
             published_at,
             categories,
-            author:author_id(id, name:name, image_url)
+            author:author_id(id, name, image_url)
           `)
-          .eq('published', true)
+          .not('published_at', 'is', null)
           .order('published_at', { ascending: false })
         
         if (error) throw error
         
         // Transform data to match our type
-        const formattedPosts = data?.map(post => ({
+        const formattedPosts = data?.map((post: any) => ({
           id: post.id,
           title: post.title,
           slug: post.slug,
           excerpt: post.excerpt,
           cover_image_url: post.cover_image_url,
           published_at: post.published_at,
-          category: post.categories?.[0] || 'Ostatné',
-          author: {
-            name: post.author?.[0]?.name || 'Admin',
-            image_url: post.author?.[0]?.image_url || '/images/avatars/default.jpg'
+          categories: post.categories || [],
+          author: post.author ? {
+            id: post.author.id,
+            name: post.author.name,
+            image_url: post.author.image_url
+          } : {
+            id: '0',
+            name: 'Admin',
+            image_url: '/images/avatars/default.jpg'
           }
         })) || []
         
         setPosts(formattedPosts)
         
         // Extract categories
-        const allCategories = formattedPosts.map(post => post.category)
+        const allCategories = formattedPosts.flatMap(post => post.categories || [])
         const uniqueCategories = ['Všetko', ...Array.from(new Set(allCategories))]
         setCategories(uniqueCategories)
         
@@ -86,6 +92,7 @@ export default function BlogPage() {
   useEffect(() => {
     if (isLoading && !posts.length) {
       // Mock blog posts
+      // Mock data should match our updated BlogPost type
       const mockPosts: BlogPost[] = [
         {
           id: '1',
@@ -94,8 +101,9 @@ export default function BlogPage() {
           excerpt: 'Profesionálne rady, ako sa o svoju pleť starať aj medzi návštevami nášho salónu pre jej zdravý a žiarivý vzhľad.',
           cover_image_url: '/images/blog/blog-1.jpg',
           published_at: '2025-03-15T10:00:00.000Z',
-          category: 'Starostlivosť o pleť',
+          categories: ['Starostlivosť o pleť'],
           author: {
+            id: '1',
             name: 'Lucia Kováčová',
             image_url: '/images/team/team-1.jpg',
           },
@@ -107,8 +115,9 @@ export default function BlogPage() {
           excerpt: 'Výhody permanentného make-upu a dôvody, prečo táto procedúra môže zjednodušiť vašu každodennú rutinu a zvýšiť sebavedomie.',
           cover_image_url: '/images/blog/blog-2.jpg',
           published_at: '2025-03-08T10:00:00.000Z',
-          category: 'Permanentný make-up',
+          categories: ['Permanentný make-up'],
           author: {
+            id: '2',
             name: 'Soňa Novotná',
             image_url: '/images/team/team-4.jpg',
           },
@@ -120,8 +129,9 @@ export default function BlogPage() {
           excerpt: 'Komplexný sprievodca letnou starostlivosťou o pleť, ktorý vám pomôže chrániť ju pred slnkom a udržať ju hydratovanú počas horúcich dní.',
           cover_image_url: '/images/blog/blog-3.jpg',
           published_at: '2025-03-01T10:00:00.000Z',
-          category: 'Sezónne tipy',
+          categories: ['Sezónne tipy'],
           author: {
+            id: '3',
             name: 'Martina Kučerová',
             image_url: '/images/team/team-2.jpg',
           },
@@ -133,8 +143,9 @@ export default function BlogPage() {
           excerpt: 'Od lash liftingu po lamináciu - všetko, čo potrebujete vedieť o aktuálnych trendoch v starostlivosti o mihalnice.',
           cover_image_url: '/images/blog/blog-4.jpg',
           published_at: '2025-02-23T10:00:00.000Z',
-          category: 'Trendy',
+          categories: ['Trendy'],
           author: {
+            id: '2',
             name: 'Soňa Novotná',
             image_url: '/images/team/team-4.jpg',
           },
@@ -146,8 +157,9 @@ export default function BlogPage() {
           excerpt: 'Sprievodca výberom správneho krému pre rôzne typy pleti. Naučte sa rozpoznať svoju pleť a vybrať produkty, ktoré jej najviac prospejú.',
           cover_image_url: '/images/blog/blog-5.jpg',
           published_at: '2025-02-15T10:00:00.000Z',
-          category: 'Starostlivosť o pleť',
+          categories: ['Starostlivosť o pleť'],
           author: {
+            id: '1',
             name: 'Lucia Kováčová',
             image_url: '/images/team/team-1.jpg',
           },
@@ -159,8 +171,9 @@ export default function BlogPage() {
           excerpt: 'Jednoduchá masáž tváre, ktorú zvládnete aj doma. Zlepšite krvný obeh, redukujte opuchnutie a vrásky pomocou týchto techník.',
           cover_image_url: '/images/blog/blog-6.jpg',
           published_at: '2025-02-08T10:00:00.000Z',
-          category: 'DIY tipy',
+          categories: ['DIY tipy'],
           author: {
+            id: '4',
             name: 'Nina Horváthová',
             image_url: '/images/team/team-3.jpg',
           },
@@ -170,7 +183,7 @@ export default function BlogPage() {
       setPosts(mockPosts)
       
       // Extract categories
-      const allCategories = mockPosts.map(post => post.category)
+      const allCategories = mockPosts.flatMap(post => post.categories)
       const uniqueCategories = ['Všetko', ...Array.from(new Set(allCategories))]
       setCategories(uniqueCategories)
       
@@ -181,7 +194,7 @@ export default function BlogPage() {
   // Filter posts by category
   const filteredPosts = activeCategory === 'Všetko'
     ? posts
-    : posts.filter(post => post.category === activeCategory)
+    : posts.filter(post => post.categories && post.categories.includes(activeCategory))
 
   if (isLoading) {
     return (
@@ -273,7 +286,7 @@ export default function BlogPage() {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                       <div className="absolute top-4 left-4 bg-primary-600 text-white text-xs px-2 py-1 rounded">
-                        {post.category}
+                        {post.categories?.[0] || 'Bez kategórie'}
                       </div>
                     </div>
                     
