@@ -134,8 +134,24 @@ const Certifications = () => {
   )
 }
 
+interface TeamMember {
+  id: number;
+  name: string;
+  position: string;
+  bio: string;
+  image: string;
+  specialties: string[];
+  education: string[];
+  favorite_quote: string;
+}
+
+interface TeamMemberDetailProps {
+  member: TeamMember;
+  onClose: () => void;
+}
+
 // Team Member Detail Modal
-const TeamMemberDetail = ({ member, onClose }) => {
+const TeamMemberDetail = ({ member, onClose }: TeamMemberDetailProps) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <motion.div
@@ -223,7 +239,7 @@ const TeamMemberDetail = ({ member, onClose }) => {
 }
 
 export default function TeamPage() {
-  const [selectedMember, setSelectedMember] = useState(null)
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
   
   return (
     <div className="pt-24 pb-20">

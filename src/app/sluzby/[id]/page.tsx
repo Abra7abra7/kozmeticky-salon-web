@@ -130,12 +130,12 @@ export default function ServiceDetailPage() {
         if (teamError) throw teamError
         
         // Correctly map each team member object from the result
-        const specialists = teamData?.map(item => ({
-          id: item.team_member?.id,
-          name: item.team_member?.name,
-          position: item.team_member?.position,
-          image_url: item.team_member?.image_url
-        })) || []
+        const specialists = (teamData || []).map(item => ({
+          id: (item.team_member as any)?.id || '',
+          name: (item.team_member as any)?.name || '',
+          position: (item.team_member as any)?.position || '',
+          image_url: (item.team_member as any)?.image_url || ''
+        }))
         
         setSpecialists(specialists)
         

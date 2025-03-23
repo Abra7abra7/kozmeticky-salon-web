@@ -106,7 +106,6 @@ CREATE TABLE IF NOT EXISTS gift_vouchers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code VARCHAR(20) UNIQUE NOT NULL,
   value DECIMAL(10, 2) NOT NULL,
-  service_ids UUID[] REFERENCES services(id),
   valid_from TIMESTAMP WITH TIME ZONE NOT NULL,
   valid_until TIMESTAMP WITH TIME ZONE NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'unused', -- unused, used
@@ -116,6 +115,15 @@ CREATE TABLE IF NOT EXISTS gift_vouchers (
   purchaser_email VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   used_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Spojovacia tabuľka pre darčekové poukazy a služby
+CREATE TABLE IF NOT EXISTS gift_voucher_services (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  gift_voucher_id UUID REFERENCES gift_vouchers(id) ON DELETE CASCADE,
+  service_id UUID REFERENCES services(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(gift_voucher_id, service_id)
 );
 
 -- Tabuľka nastavení
