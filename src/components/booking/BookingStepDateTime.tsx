@@ -14,8 +14,16 @@ type TeamMember = {
   image_url: string;
 }
 
+type Service = {
+  id: string;
+  name: string;
+  duration: number;
+  price: number;
+};
+
 type Props = {
   serviceId: string;
+  service?: Service;
   teamMembers: TeamMember[];
   selectedTeamMemberId: string;
   selectedDate: string;
@@ -66,6 +74,7 @@ const generateTimeSlots = (date: Date, teamMemberId: string) => {
 
 export default function BookingStepDateTime({ 
   serviceId, 
+  service,
   teamMembers, 
   selectedTeamMemberId, 
   selectedDate, 
@@ -73,6 +82,7 @@ export default function BookingStepDateTime({
   onSelect,
   onBack
 }: Props) {
+  console.log('BookingStepDateTime rendered with service:', service);
   const [activeTeamMemberId, setActiveTeamMemberId] = useState(selectedTeamMemberId || '')
   const [selectedDateObj, setSelectedDateObj] = useState<Date | null>(selectedDate ? new Date(selectedDate) : null)
   const [activeTime, setActiveTime] = useState(selectedTime || '')
@@ -119,9 +129,17 @@ export default function BookingStepDateTime({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-serif font-bold text-gray-900 mb-6">
-        Vyberte termín
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-serif font-bold text-gray-900">
+          Vyberte termín
+        </h2>
+        {service && (
+          <div className="mt-2 text-gray-600">
+            <p>Vybraná služba: <span className="font-semibold">{service.name}</span></p>
+            <p className="text-sm">Trvanie: {service.duration} minút | Cena: {service.price} €</p>
+          </div>
+        )}
+      </div>
       
       {/* Team member selection */}
       <div className="mb-8">

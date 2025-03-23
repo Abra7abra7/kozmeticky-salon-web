@@ -70,14 +70,19 @@ export default function BookingPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('Fetching services from Supabase...');
         // Fetch services
         const { data: servicesData, error: servicesError } = await supabase
           .from('services')
           .select('*')
           .order('popularity', { ascending: false })
         
-        if (servicesError) throw servicesError
+        if (servicesError) {
+          console.error('Error fetching services:', servicesError);
+          throw servicesError;
+        }
         
+        console.log('Services fetched:', servicesData);
         setServices(servicesData || [])
         
         // Fetch team members
@@ -356,6 +361,7 @@ export default function BookingPage() {
           {currentStep === 2 && (
             <BookingStepDateTime 
               serviceId={formData.serviceId}
+              service={services.find(s => s.id === formData.serviceId)}
               teamMembers={teamMembers}
               selectedTeamMemberId={formData.teamMemberId}
               selectedDate={formData.date}
