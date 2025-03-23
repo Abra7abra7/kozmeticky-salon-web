@@ -82,10 +82,10 @@ export default function BlogPostPage() {
           category: data.categories?.[0] || 'Ostatné',
           tags: data.tags || [],
           author: {
-            id: data.author?.id,
-            name: data.author?.name || 'Admin',
-            position: data.author?.position || 'Kozmetička',
-            image_url: data.author?.image_url || '/images/avatars/default.jpg'
+            id: data.author?.[0]?.id,
+            name: data.author?.[0]?.name || 'Admin',
+            position: data.author?.[0]?.position || 'Kozmetička',
+            image_url: data.author?.[0]?.image_url || '/images/avatars/default.jpg'
           }
         }
         

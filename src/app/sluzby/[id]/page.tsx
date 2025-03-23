@@ -129,8 +129,15 @@ export default function ServiceDetailPage() {
         
         if (teamError) throw teamError
         
-        const specialists = teamData?.map(item => item.team_member) || []
-        setSpecialists(specialists as TeamMember[])
+        // Correctly map each team member object from the result
+        const specialists = teamData?.map(item => ({
+          id: item.team_member?.id,
+          name: item.team_member?.name,
+          position: item.team_member?.position,
+          image_url: item.team_member?.image_url
+        })) || []
+        
+        setSpecialists(specialists)
         
       } catch (err: any) {
         console.error('Chyba pri načítaní dát:', err)

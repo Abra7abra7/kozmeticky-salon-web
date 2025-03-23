@@ -59,8 +59,8 @@ export default function BlogPage() {
           published_at: post.published_at,
           category: post.categories?.[0] || 'Ostatné',
           author: {
-            name: post.author?.name || 'Admin',
-            image_url: post.author?.image_url || '/images/avatars/default.jpg'
+            name: post.author?.[0]?.name || 'Admin',
+            image_url: post.author?.[0]?.image_url || '/images/avatars/default.jpg'
           }
         })) || []
         
