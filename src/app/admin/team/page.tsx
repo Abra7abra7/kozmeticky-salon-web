@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import TeamMemberImage from '@/components/admin/TeamMemberImage';
 
 export const metadata: Metadata = {
   title: 'Správa tímu | Admin Panel',
@@ -19,14 +20,9 @@ export default function TeamPage() {
         {/* Team member card */}
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <div className="h-40 bg-indigo-100 flex items-center justify-center">
-            <img 
-              src="/images/team/placeholder.jpg" 
-              alt="Martina K." 
-              className="h-32 w-32 rounded-full object-cover border-4 border-white"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "https://via.placeholder.com/150?text=MK";
-              }}
+            <TeamMemberImage 
+              name="Martina Kováčová"
+              imageSrc="/images/team/placeholder.jpg"
             />
           </div>
           <div className="p-6">
@@ -62,14 +58,9 @@ export default function TeamPage() {
         {/* Team member card */}
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <div className="h-40 bg-indigo-100 flex items-center justify-center">
-            <img 
-              src="/images/team/placeholder.jpg" 
-              alt="Katarína B." 
-              className="h-32 w-32 rounded-full object-cover border-4 border-white"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "https://via.placeholder.com/150?text=KB";
-              }}
+            <TeamMemberImage 
+              name="Katarína Biela"
+              imageSrc="/images/team/placeholder.jpg"
             />
           </div>
           <div className="p-6">
@@ -102,14 +93,9 @@ export default function TeamPage() {
         {/* Team member card */}
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <div className="h-40 bg-indigo-100 flex items-center justify-center">
-            <img 
-              src="/images/team/placeholder.jpg" 
-              alt="Simona P." 
-              className="h-32 w-32 rounded-full object-cover border-4 border-white"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "https://via.placeholder.com/150?text=SP";
-              }}
+            <TeamMemberImage 
+              name="Simona Pekná"
+              imageSrc="/images/team/placeholder.jpg"
             />
           </div>
           <div className="p-6">
