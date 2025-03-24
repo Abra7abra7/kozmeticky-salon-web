@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { BlogPost } from '@/lib/admin-service';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 // Dynamically import the editor to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -35,11 +35,11 @@ export default function BlogPostForm({
   });
 
   const [editorContent, setEditorContent] = useState<string>(blogPost?.content || '');
-  const [imagePreview, setImagePreview] = useState<string | null>(blogPost?.image_url || null);
   const [categories, setCategories] = useState<string[]>(blogPost?.categories || []);
   const [newCategory, setNewCategory] = useState<string>('');
 
   const title = watch('title');
+  const imageUrl = watch('image_url');
 
   // Generate slug from title
   useEffect(() => {
@@ -74,11 +74,9 @@ export default function BlogPostForm({
     setValue('categories', updatedCategories);
   };
 
-  // Handle image URL change
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value;
+  // Handle image upload
+  const handleImageUpload = (url: string) => {
     setValue('image_url', url);
-    setImagePreview(url);
   };
 
   const editorModules = {
@@ -142,27 +140,11 @@ export default function BlogPostForm({
           </div>
 
           <div>
-            <label htmlFor="image_url" className="block text-sm font-medium text-gray-700 mb-1">
-              URL obrázku
-            </label>
-            <input
-              id="image_url"
-              type="text"
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
-              onChange={handleImageUrlChange}
-              value={watch('image_url') || ''}
+            <ImageUploader 
+              onImageUploadAction={handleImageUpload}
+              currentImageUrl={imageUrl}
+              label="Obrázok článku"
             />
-            {imagePreview && (
-              <div className="mt-2 relative w-full h-48">
-                <Image 
-                  src={imagePreview} 
-                  alt="Náhľad obrázku" 
-                  fill
-                  className="object-cover rounded-md"
-                  onError={() => setImagePreview(null)}
-                />
-              </div>
-            )}
           </div>
 
           <div>

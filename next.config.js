@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['picsum.photos', 'via.placeholder.com', 'images.unsplash.com', 'example.com'],
+    domains: ['picsum.photos', 'via.placeholder.com', 'images.unsplash.com', 'example.com', 'ymxdehaqgntvrpcktgzq.supabase.co'],
   },
 };
 

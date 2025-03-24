@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Service } from '@/lib/admin-service';
 import ServiceForm from './forms/ServiceForm';
+import Image from 'next/image';
 
 interface ServiceListProps {
   services: Service[];
@@ -181,7 +182,25 @@ export default function ServiceList(props: ServiceListProps) {
                   filteredServices.map((service) => (
                     <tr key={service.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {service.name}
+                        <div className="flex items-center">
+                          {service.image_url && (
+                            <div className="flex-shrink-0 h-10 w-10 mr-4">
+                              <div className="relative h-10 w-10">
+                                <Image
+                                  src={service.image_url}
+                                  alt={service.name}
+                                  fill
+                                  className="object-cover rounded"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/placeholder-image.jpg';
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                          <span>{service.name}</span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {service.category}

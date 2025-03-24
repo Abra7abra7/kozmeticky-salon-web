@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Service } from '@/lib/admin-service';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 interface ServiceFormProps {
   service?: Service;
@@ -11,7 +12,7 @@ interface ServiceFormProps {
 }
 
 export default function ServiceForm(props: ServiceFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<Service>({
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<Service>({
     defaultValues: props.service || {
       name: '',
       category: '',
@@ -33,6 +34,12 @@ export default function ServiceForm(props: ServiceFormProps) {
   ];
 
   const { service, onSubmit, onCancel } = props;
+
+  const imageUrl = watch('image_url');
+
+  const handleImageUpload = (url: string) => {
+    setValue('image_url', url);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -149,14 +156,10 @@ export default function ServiceForm(props: ServiceFormProps) {
         </div>
 
         <div>
-          <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
-            URL obrázka
-          </label>
-          <input
-            id="image_url"
-            type="text"
-            {...register('image_url')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          <ImageUploader 
+            onImageUploadAction={handleImageUpload}
+            currentImageUrl={imageUrl}
+            label="Obrázok služby"
           />
         </div>
       </div>

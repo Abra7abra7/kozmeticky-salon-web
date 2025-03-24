@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { TeamMember } from '@/lib/admin-service';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 interface TeamMemberFormProps {
   teamMember?: TeamMember;
@@ -26,6 +27,11 @@ export default function TeamMemberForm(props: TeamMemberFormProps) {
 
   const [newSpecialization, setNewSpecialization] = useState('');
   const [newCertification, setNewCertification] = useState('');
+  const imageUrl = watch('image_url');
+
+  const handleImageUpload = (url: string) => {
+    setValue('image_url', url);
+  };
 
   const positions = [
     'Kozmetička',
@@ -113,14 +119,10 @@ export default function TeamMemberForm(props: TeamMemberFormProps) {
       </div>
 
       <div>
-        <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
-          URL fotografie
-        </label>
-        <input
-          id="image_url"
-          type="text"
-          {...register('image_url')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        <ImageUploader 
+          onImageUploadAction={handleImageUpload}
+          currentImageUrl={imageUrl}
+          label="Fotografia člena tímu"
         />
       </div>
 

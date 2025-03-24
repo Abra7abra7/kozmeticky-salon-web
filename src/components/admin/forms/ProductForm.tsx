@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Product } from '@/lib/admin-service';
-import Image from 'next/image';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 interface ProductFormProps {
   product?: Product;
@@ -28,13 +28,10 @@ export default function ProductForm({
     }
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(product?.image_url || null);
+  const imageUrl = watch('image_url');
 
-  // Handle image URL change
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value;
+  const handleImageUpload = (url: string) => {
     setValue('image_url', url);
-    setImagePreview(url);
   };
 
   return (
@@ -93,27 +90,11 @@ export default function ProductForm({
           </div>
 
           <div>
-            <label htmlFor="image_url" className="block text-sm font-medium text-gray-700 mb-1">
-              URL obrázku
-            </label>
-            <input
-              id="image_url"
-              type="text"
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
-              onChange={handleImageUrlChange}
-              value={watch('image_url') || ''}
+            <ImageUploader 
+              onImageUploadAction={handleImageUpload}
+              currentImageUrl={imageUrl}
+              label="Obrázok produktu"
             />
-            {imagePreview && (
-              <div className="mt-2 relative w-full h-48">
-                <Image 
-                  src={imagePreview} 
-                  alt="Náhľad obrázku" 
-                  fill
-                  className="object-cover rounded-md"
-                  onError={() => setImagePreview(null)}
-                />
-              </div>
-            )}
           </div>
 
           <div className="flex space-x-4">
