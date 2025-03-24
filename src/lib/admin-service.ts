@@ -84,6 +84,18 @@ export type GiftVoucher = {
   used_at?: string;
 };
 
+export type Client = {
+  id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  registration_date?: string;
+  visit_count?: number;
+  total_spent?: number;
+  status: 'active' | 'inactive' | 'new' | 'vip';
+  notes?: string;
+};
+
 // Services CRUD
 export async function getServices() {
   const supabase = createServerClient();
@@ -463,6 +475,62 @@ export async function deleteGiftVoucher(id: string) {
   
   if (!error) {
     revalidatePath('/admin/vouchers');
+  }
+  
+  return { error };
+}
+
+// Clients CRUD
+export async function getClients() {
+  const supabase = createServerClient();
+  const { data, error } = await supabase.from('clients').select('*');
+  return { data, error };
+}
+
+export async function getClientById(id: string) {
+  const supabase = createServerClient();
+  const { data, error } = await supabase.from('clients').select('*').eq('id', id).single();
+  return { data, error };
+}
+
+export async function createClient(client: Client) {
+  const supabase = createServerClient();
+  
+  // Set default values for new clients
+  const newClient = {
+    ...client,
+    registration_date: client.registration_date || new Date().toISOString(),
+    visit_count: client.visit_count || 0,
+    total_spent: client.total_spent || 0,
+    status: client.status || 'new'
+  };
+  
+  const { data, error } = await supabase.from('clients').insert(newClient).select();
+  
+  if (!error) {
+    revalidatePath('/admin/clients');
+  }
+  
+  return { data, error };
+}
+
+export async function updateClient(id: string, client: Partial<Client>) {
+  const supabase = createServerClient();
+  const { data, error } = await supabase.from('clients').update(client).eq('id', id).select();
+  
+  if (!error) {
+    revalidatePath('/admin/clients');
+  }
+  
+  return { data, error };
+}
+
+export async function deleteClient(id: string) {
+  const supabase = createServerClient();
+  const { error } = await supabase.from('clients').delete().eq('id', id);
+  
+  if (!error) {
+    revalidatePath('/admin/clients');
   }
   
   return { error };

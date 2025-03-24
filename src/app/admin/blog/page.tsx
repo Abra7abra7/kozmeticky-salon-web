@@ -3,6 +3,8 @@ import { getBlogPosts } from '@/lib/admin-service';
 import { handleCreateBlogPost, handleUpdateBlogPost, handleDeleteBlogPost } from './actions';
 import { seedBlogPosts } from './seed';
 import { checkBlogPostsSchema } from './check-schema';
+import AddBlogPostButton from './components/AddBlogPostButton';
+import BlogPostActions from './components/BlogPostActions';
 
 export const metadata: Metadata = {
   title: 'Správa blogu | Admin Panel',
@@ -33,9 +35,7 @@ export default async function BlogPage() {
               Pridať testovacie články
             </button>
           </form>
-          <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-            Nový článok
-          </button>
+          <AddBlogPostButton />
         </div>
       </div>
       
@@ -113,8 +113,7 @@ export default async function BlogPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">Upraviť</button>
-                      <button className="text-red-600 hover:text-red-900">Zmazať</button>
+                      <BlogPostActions postId={post.id || ''} />
                     </td>
                   </tr>
                 ))
