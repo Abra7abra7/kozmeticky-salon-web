@@ -1,19 +1,49 @@
 import { Metadata } from 'next';
+import { getBlogPosts } from '@/lib/admin-service';
+import { handleCreateBlogPost, handleUpdateBlogPost, handleDeleteBlogPost } from './actions';
+import { seedBlogPosts } from './seed';
+import { checkBlogPostsSchema } from './check-schema';
 
 export const metadata: Metadata = {
   title: 'Správa blogu | Admin Panel',
   description: 'Správa blogových článkov kozmetického salónu',
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const { data: blogPosts, error } = await getBlogPosts();
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Správa blogu</h1>
-        <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-          Nový článok
-        </button>
+        <div className="flex gap-2">
+          <form action={checkBlogPostsSchema}>
+            <button 
+              type="submit"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Skontrolovať schému
+            </button>
+          </form>
+          <form action={seedBlogPosts}>
+            <button 
+              type="submit"
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            >
+              Pridať testovacie články
+            </button>
+          </form>
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+            Nový článok
+          </button>
+        </div>
       </div>
+      
+      {error && (
+        <div className="bg-red-50 p-4 rounded-md">
+          <p className="text-red-700">Chyba pri načítaní blogových článkov: {error.message}</p>
+        </div>
+      )}
       
       <div className="bg-white shadow rounded-lg p-6">
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
@@ -45,13 +75,10 @@ export default function BlogPage() {
                   Názov
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Autor
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Kategórie
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Publikované
+                  Dátum publikácie
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
@@ -62,63 +89,42 @@ export default function BlogPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {/* Placeholder for blog post data */}
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  10 tipov pre zdravú pleť v zime
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  Martina K.
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mr-1">
-                    Starostlivosť o pleť
-                  </span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                    Tipy a triky
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  15.3.2025
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Publikované
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button className="text-indigo-600 hover:text-indigo-900 mr-3">Upraviť</button>
-                  <button className="text-red-600 hover:text-red-900">Zmazať</button>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  Najnovšie trendy v permanentnom make-upe
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  Simona P.
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mr-1">
-                    Make-up
-                  </span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                    Trendy
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  -
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                    Koncept
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button className="text-indigo-600 hover:text-indigo-900 mr-3">Upraviť</button>
-                  <button className="text-red-600 hover:text-red-900">Zmazať</button>
-                </td>
-              </tr>
+              {blogPosts && blogPosts.length > 0 ? (
+                blogPosts.map((post) => (
+                  <tr key={post.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {post.title}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {post.categories && post.categories.map((category: string, index: number) => (
+                        <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mr-1">
+                          {category}
+                        </span>
+                      ))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {post.published_at ? new Date(post.published_at).toLocaleDateString('sk-SK') : '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        post.published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {post.published ? 'Publikované' : 'Koncept'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">Upraviť</button>
+                      <button className="text-red-600 hover:text-red-900">Zmazať</button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                    {error ? 'Chyba pri načítaní článkov' : 'Žiadne články neboli nájdené'}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
