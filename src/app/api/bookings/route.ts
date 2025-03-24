@@ -40,16 +40,15 @@ export async function POST(request: Request) {
     const { data: bookingData, error: bookingError } = await supabase
       .from('bookings')
       .insert({
-        serviceId: body.serviceId,
-        teamMemberId: body.teamMemberId,
-        name: body.clientName,
-        email: body.clientEmail,
-        phone: body.clientPhone,
-        dateTime: body.dateTime,
+        service_id: body.serviceId,
+        team_member_id: body.teamMemberId,
+        client_name: body.clientName,
+        client_email: body.clientEmail,
+        client_phone: body.clientPhone,
+        date_time: body.dateTime,
         notes: body.notes,
         status: 'confirmed',
-        duration: body.duration,
-        createdAt: new Date().toISOString()
+        duration: body.duration
       })
       .select()
       .single();

@@ -374,9 +374,9 @@ export default function BookingPage() {
           {currentStep === 3 && (
             <BookingStepContact 
               formData={formData}
-              onSubmit={handleContactInfoSubmit}
-              onSimulateSuccess={simulateSuccessfulBooking} // Pre testovanie
-              onBack={navigateBack}
+              onSubmitAction={handleContactInfoSubmit}
+              onSimulateSuccessAction={simulateSuccessfulBooking} // Pre testovanie
+              onBackAction={navigateBack}
             />
           )}
           

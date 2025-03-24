@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { handleDeleteBlogPost } from '../actions';
 
 type BlogPostActionsProps = {
   postId: string;
@@ -17,16 +16,15 @@ export default function BlogPostActions({ postId }: BlogPostActionsProps) {
     if (confirm('Naozaj chcete odstrániť tento článok?')) {
       setIsDeleting(true);
       try {
-        const result = await handleDeleteBlogPost(postId);
-        if (result.error) {
-          alert(result.error);
-        } else {
-          router.refresh();
-        }
+        // Use a form to submit the delete action
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = `/admin/blog/delete?id=${postId}`;
+        document.body.appendChild(form);
+        form.submit();
       } catch (error) {
         console.error('Error deleting blog post:', error);
         alert('Nastala chyba pri odstraňovaní článku.');
-      } finally {
         setIsDeleting(false);
       }
     }

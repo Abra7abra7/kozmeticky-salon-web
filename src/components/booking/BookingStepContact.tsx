@@ -19,12 +19,12 @@ type BookingFormData = {
 
 type Props = {
   formData: BookingFormData;
-  onSubmit: (data: Partial<BookingFormData>) => void;
-  onSimulateSuccess: (data: Partial<BookingFormData>) => void; // Pre testovanie
-  onBack: () => void;
+  onSubmitAction: (data: Partial<BookingFormData>) => void;
+  onSimulateSuccessAction?: (data: Partial<BookingFormData>) => void; // Pre testovanie
+  onBackAction: () => void;
 }
 
-export default function BookingStepContact({ formData, onSubmit, onSimulateSuccess, onBack }: Props) {
+export default function BookingStepContact({ formData, onSubmitAction, onSimulateSuccessAction, onBackAction }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   
   const {
@@ -46,14 +46,9 @@ export default function BookingStepContact({ formData, onSubmit, onSimulateSucce
     setIsSubmitting(true)
     
     try {
-      // Uncomment for real API call
-      // await onSubmit(data)
-      
-      // For demo purposes, use the simulate function instead
-      setTimeout(() => {
-        onSimulateSuccess(data)
-        setIsSubmitting(false)
-      }, 1500)
+      // Make the real API call
+      await onSubmitAction(data)
+      setIsSubmitting(false)
     } catch (error) {
       console.error('Error submitting form:', error)
       setIsSubmitting(false)
@@ -216,7 +211,7 @@ export default function BookingStepContact({ formData, onSubmit, onSimulateSucce
           <button
             type="button"
             className="btn-outline px-6 py-2"
-            onClick={onBack}
+            onClick={onBackAction}
           >
             Späť
           </button>

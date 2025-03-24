@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { handleCreateBlogPost } from '../actions';
 import { BlogPost } from '@/lib/admin-service';
 
 export default function NewBlogPostPage() {
@@ -32,22 +31,26 @@ export default function NewBlogPostPage() {
       return;
     }
     
-    const blogPost: BlogPost = {
-      title,
-      slug,
-      excerpt,
-      content,
-      image_url: image_url || undefined,
-      categories,
-      published,
-      published_at: published ? new Date().toISOString() : undefined
-    };
+    // Add categories to formData
+    categories.forEach((category, index) => {
+      formData.append(`categories[${index}]`, category);
+    });
+    
+    // Add slug to formData if not already present
+    if (!formData.get('slug')) {
+      formData.append('slug', slug);
+    }
     
     try {
-      const result = await handleCreateBlogPost(blogPost);
+      const response = await fetch('/api/blog', {
+        method: 'POST',
+        body: formData,
+      });
       
-      if (result.error) {
-        setError(result.error);
+      const result = await response.json();
+      
+      if (!response.ok) {
+        setError(result.error || 'Nastala neočakávaná chyba pri vytváraní článku.');
         setIsSubmitting(false);
         return;
       }
